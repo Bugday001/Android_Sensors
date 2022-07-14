@@ -1,90 +1,3 @@
-//package com.example.gps_gyro;
-///*
-// * 本工程GPSLocation的功能是使用GPS实时定位,实时显示手机的经纬度
-// */
-////import introduction.android.gpsLocation.R;
-//
-//import android.Manifest;
-//import android.app.Activity;
-//import android.content.Context;
-//import android.content.Intent;
-//import android.content.pm.PackageManager;
-//import android.location.LocationListener;
-//import android.location.LocationManager;  //
-//import android.location.Location;   //
-//import android.os.Bundle;
-//import android.provider.Settings;
-//import android.util.Log;
-//import android.view.View;
-//import android.view.View.OnClickListener;
-//import android.widget.Button;
-//import android.widget.TextView;
-//import android.widget.Toast;
-//
-//import androidx.core.app.ActivityCompat;
-//
-//public class LocationActivity extends Activity {
-//    private Button btn_listen;
-//    private TextView tv_01, tv_02;
-//    LocationManager lm;  //
-//    Location loc;  //
-//
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_location);
-//
-//        lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);  //
-//        //检测GPS状态（是否开启）
-//        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {  //若未打开GPS
-//            Toast.makeText(LocationActivity.this, "请开启GPS服务", Toast.LENGTH_LONG).show();
-//            Intent myintent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//            startActivity(myintent);  //运行手机的设置程序
-//        }
-//
-//        btn_listen = (Button) findViewById(R.id.btn_listen);
-//        tv_01 = (TextView) findViewById(R.id.tv_01);
-//        tv_02 = (TextView) findViewById(R.id.tv_02);
-//
-//        btn_listen.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                try {
-//                    lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new MyLocationListener());
-//                } catch (SecurityException unlikely) {
-//                    Log.e("error loction", "Lost location permission. Could not request updates. " +
-//                            unlikely);
-//                }
-//
-//            }
-//        });
-//    }
-//    //位置监听器方法
-//    class MyLocationListener implements LocationListener{  //位置监听器，作为方法参数
-//        @Override
-//        public void onLocationChanged(Location loc) {
-//            // TODO Auto-generated method stub
-//            tv_01.setText("经度："+loc.getLongitude());
-//            tv_02.setText("纬度："+loc.getLatitude());
-//        }
-//        @Override
-//        public void onProviderDisabled(String provider) {
-//            //当provider被用户关闭时调用
-//            Log.i("GpsLocation","provider被关闭！");
-//        }
-//        @Override
-//        public void onProviderEnabled(String provider) {
-//            //当provider被用户开启后调用
-//            Log.i("GpsLocation","provider被开启！");
-//        }
-//        @Override
-//        public void onStatusChanged(String provider, int status, Bundle extras) {
-//            //当provider的状态在OUT_OF_SERVICE、TEMPORARILY_UNAVAILABLE和AVAILABLE之间发生变化时调用
-//            Log.i("GpsLocation","provider状态发生改变！");
-//        }
-//    }
-//}
-
 package com.example.gps_gyro;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -103,13 +16,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -120,14 +27,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-//implements View.OnClickListener,
+
+import org.json.JSONObject;
+
+import java.util.Locale;
+
+
 public class LocationActivity extends AppCompatActivity implements SensorEventListener, CompoundButton.OnCheckedChangeListener {
 
 
@@ -156,7 +61,7 @@ public class LocationActivity extends AppCompatActivity implements SensorEventLi
     /*
     传感器数据
      */
-    float[] SensorsData = new float[3*3];
+    static float[] SensorsData = new float[3*3];
 
     @SuppressLint("MissingPermission")
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -287,9 +192,9 @@ public class LocationActivity extends AppCompatActivity implements SensorEventLi
             SensorsData[7] = y;
             SensorsData[8] = z;
             StringBuffer buffer = new StringBuffer();
-            buffer.append("X方向的磁场为：").append(String.format("%.2f", x)).append("\n");
-            buffer.append("Y方向的磁场为：").append(String.format("%.2f", y)).append("\n");
-            buffer.append("Z方向的磁场为：").append(String.format("%.2f", z)).append("\n");
+            buffer.append("X方向的磁场为：").append(String.format(Locale.CHINA,"%.2f", x)).append("\n");
+            buffer.append("Y方向的磁场为：").append(String.format(Locale.CHINA,"%.2f", y)).append("\n");
+            buffer.append("Z方向的磁场为：").append(String.format(Locale.CHINA,"%.2f", z)).append("\n");
             mMagneticField.setText(buffer);
         }
     }
@@ -375,17 +280,12 @@ public class LocationActivity extends AppCompatActivity implements SensorEventLi
     }
 
     //定义一个更新显示的方法
-    @SuppressLint("SetTextI18n")
     private void updateShow(Location location) {
         if (location != null) {
             StringBuilder sb = new StringBuilder();
             sb.append("当前的位置信息：\n");
-            double a = location.getLongitude();
-//            if(a<=0){
-//                a = location.getLongitude()*-1;
-//            }
-            tv_lon.setText(String.valueOf(a));
-            tv_lat.setText(String.valueOf(location.getLatitude()));
+            tv_lon.setText(String.format(Locale.CHINA,"%.2f", location.getLongitude()));
+            tv_lat.setText(String.format(Locale.CHINA,"%.2f", location.getLatitude()));
             tv_altitude.setText(String.valueOf(location.getAltitude()));
             tv_speed.setText(String.valueOf(location.getSpeed()));
             tv_provider.setText(String.valueOf(location.getProvider()));
@@ -399,7 +299,7 @@ public class LocationActivity extends AppCompatActivity implements SensorEventLi
         Location lc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         updateShow(lc);
         //设置间隔两秒获得一次GPS定位信息
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 8, new LocationListener() {
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 8, new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 // 当GPS定位信息发生改变时，更新定位
@@ -430,7 +330,7 @@ public class LocationActivity extends AppCompatActivity implements SensorEventLi
     //打开设置页面让用户自己设置
     private void openGPS2() {
         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        startActivityForResult(intent, 0);
+        startActivity(intent);
     }
 }
 
@@ -439,20 +339,63 @@ class Network {
     static TCPClient[] mThread = {null};
     static String IP, PortStr;
     static int Port;
+
+    /**
+     *
+     * @param context
+     * @param data
+     */
     public static void SendMagTCP(Context context, float[] data){
+        String send_data = CreateJson(data).concat("\r\n");
         if(TCPConect)
         {
-            mThread[0].setMsg(String.valueOf(data[0]));
+            mThread[0].setMsg(send_data);
             mThread[0].sendSocket();
         }
         else
         {
-            IP = SPUtils.get(context, "ip", "192.168.0.1").toString();;
-            PortStr = SPUtils.get(context, "port", "7850").toString();;
-            Port = Integer.valueOf(PortStr);
-            mThread[0] = new TCPClient(IP, Port, String.valueOf(data[0])+"\n");
+            IP = SPUtils.get(context, "ip", "192.168.0.1").toString();
+            PortStr = SPUtils.get(context, "port", "7850").toString();
+            Port = Integer.parseInt(PortStr);
+            mThread[0] = new TCPClient(IP, Port, send_data);
             mThread[0].sendSocket();
             TCPConect = true;
+        }
+    }
+
+    /**
+     *
+     * @param data
+     * @return
+     */
+    private static String CreateJson(float[] data)
+    {
+        JSONObject jsonObject=new JSONObject();
+        try {
+            jsonObject.put("device", "Android");
+            //加速度
+            JSONObject acc = new JSONObject();
+            acc.put("x", LocationActivity.SensorsData[0]);
+            acc.put("y", LocationActivity.SensorsData[1]);
+            acc.put("z", LocationActivity.SensorsData[2]);
+            jsonObject.put("acceleration", acc);
+            //陀螺仪
+            JSONObject gyro = new JSONObject();
+            gyro.put("x", LocationActivity.SensorsData[3]);
+            gyro.put("y", LocationActivity.SensorsData[4]);
+            gyro.put("z", LocationActivity.SensorsData[5]);
+            jsonObject.put("gyro", gyro);
+            //陀螺仪
+            JSONObject magnetic_field = new JSONObject();
+            magnetic_field.put("x", LocationActivity.SensorsData[6]);
+            magnetic_field.put("y", LocationActivity.SensorsData[7]);
+            magnetic_field.put("z", LocationActivity.SensorsData[8]);
+            jsonObject.put("magnetic_field", magnetic_field);
+            return jsonObject.toString();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
         }
     }
 
