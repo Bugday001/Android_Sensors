@@ -1,4 +1,4 @@
-# Android Sensors Project
+# Android Sensors Project-Video-branch
 
 利用旧的安卓智能机上的传感器及剩余算力为其他项目提供支持。
 
