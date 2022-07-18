@@ -53,7 +53,7 @@ public class LocationActivity extends AppCompatActivity implements SensorEventLi
     网络发送
      */
     //编码
-    static String charset = "GBK";
+    static String charset = "utf-8";
     //定时器
     private Handler handler;
     private Runnable runnable;

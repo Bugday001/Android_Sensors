@@ -7,7 +7,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -19,15 +21,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GPS_gyro"
         tools:targetApi="31">
+
+        <provider
+            android:authorities="com.example.choosepictest.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+
+        </provider>
+        <activity
+            android:name=".VideoActivity"
+            android:exported="true" />
         <activity
             android:name=".SetBasicData"
-            android:exported="true">
-        </activity>
+            android:exported="true"/>
         <activity
             android:name=".LocationActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.example.activitytest.LOCATION_START" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -36,6 +53,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
