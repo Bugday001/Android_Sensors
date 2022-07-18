@@ -1,4 +1,6 @@
-# Android Sensors Project-Video-branch
+# Android Sensors Project-Camerax-branch
+
+*使用Camerax调用摄像头*
 
 利用旧的安卓智能机上的传感器及剩余算力为其他项目提供支持。
 
