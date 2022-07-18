@@ -72,6 +72,7 @@ public class NV21EncoderH264 {
                 mediaCodec.queueInputBuffer(inputBufferIndex, 0, nv12.length, System.nanoTime() / 1000, 0);
             }
             MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+            //强行触发关键帧
             if (System.currentTimeMillis() - timeStamp >= 2000) {
                 Bundle params = new Bundle();
                 params.putInt(MediaCodec.PARAMETER_KEY_REQUEST_SYNC_FRAME, 0);
