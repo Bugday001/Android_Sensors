@@ -8,8 +8,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class CameraLive extends Thread {
     private String url;
     private MediaProjection mediaProjection;
-    private LinkedBlockingQueue<RTMPPackage> queue = new LinkedBlockingQueue<>();
-    private boolean isLiving;
+    private static LinkedBlockingQueue<RTMPPackage> queue = new LinkedBlockingQueue<>();
+    private static boolean isLiving;
     static {
         System.loadLibrary("native-lib");
     }
@@ -20,6 +20,12 @@ public class CameraLive extends Thread {
         start();
     }
 
+    public void startLive(String url) {
+        this.url = url;
+        //this.mediaProjection = mediaProjection;
+        start();
+    }
+
     @Override
     public void run() {
         if (!connect(url)) {
@@ -27,8 +33,8 @@ public class CameraLive extends Thread {
             return;
         }
 
-        VideoCodec videoCodec = new VideoCodec(this);
-        videoCodec.startLive(mediaProjection);
+//        VideoCodec videoCodec = new VideoCodec(this);
+//        videoCodec.startLive(mediaProjection);
 
         isLiving = true;
         while (isLiving) {
@@ -45,7 +51,7 @@ public class CameraLive extends Thread {
         }
     }
 
-    public void addPackage(RTMPPackage rtmpPackage) {
+    public static void addPackage(RTMPPackage rtmpPackage) {
         if (!isLiving) {
             return;
         }
